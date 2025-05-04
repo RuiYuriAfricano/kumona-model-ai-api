@@ -1,1 +1,0 @@
-# kumona-model-ai-api

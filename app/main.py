@@ -1,4 +1,3 @@
-# main.py
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse
 from keras.models import load_model
@@ -6,11 +5,24 @@ from keras.applications.inception_v3 import preprocess_input
 from PIL import Image
 import numpy as np
 import io
+import os
+import gdown
 
 app = FastAPI(title="Eye Disease Classification API")
 
+# Caminho do modelo
+MODEL_PATH = "best_model.keras"
+# URL do Google Drive (ID direto)
+MODEL_URL = "https://drive.google.com/uc?id=1vSIfD3viT5JSxpG4asA8APCwK0JK9Dvu"  # <-- Substitua pelo ID correto
+
+# Baixar o modelo se ele não existir
+if not os.path.exists(MODEL_PATH):
+    print("🔽 Baixando o modelo...")
+    gdown.download(MODEL_URL, MODEL_PATH, quiet=False)
+
 # Carregar o modelo
-model = load_model("eye_disease_model.h5")
+print("✅ Carregando modelo...")
+model = load_model(MODEL_PATH)
 
 # Nome das classes
 class_names = ['cataract', 'diabetic_retinopathy', 'glaucoma', 'normal']
