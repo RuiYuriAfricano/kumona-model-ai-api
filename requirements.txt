@@ -1,7 +1,6 @@
-fastapi
-uvicorn
+streamlit
+numpy
+pillow
 keras
 tensorflow
-pillow
-numpy
-python-multipart
+gdown
