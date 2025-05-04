@@ -11,9 +11,9 @@ MODEL_PATH = "best_model.keras"
 MODEL_URL = "https://drive.google.com/uc?id=1vSIfD3viT5JSxpG4asA8APCwK0JK9Dvu"  # substitua pelo seu ID
 
 # Baixar modelo se necessário
-if not os.path.exists(MODEL_PATH):
-    st.write("🔽 Baixando modelo...")
-    gdown.download(MODEL_URL, MODEL_PATH, quiet=False)
+#if not os.path.exists(MODEL_PATH):
+st.write("🔽 Baixando modelo...")
+gdown.download(MODEL_URL, MODEL_PATH, quiet=False)
 
 # Carregar modelo
 st.write("✅ Carregando modelo...")
