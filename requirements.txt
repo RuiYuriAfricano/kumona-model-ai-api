@@ -1,6 +1,6 @@
-streamlit
-numpy
+flask
 pillow
-keras
 tensorflow
+keras
 gdown
+numpy

@@ -1,0 +1,6 @@
+streamlit
+numpy
+pillow
+keras
+tensorflow
+gdown
