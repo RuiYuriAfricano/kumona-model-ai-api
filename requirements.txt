@@ -1,6 +1,6 @@
-flask
-pillow
-tensorflow
-keras
-gdown
+streamlit
 numpy
+pillow
+keras
+tensorflow
+gdown

@@ -1,55 +1,44 @@
-from flask import Flask, request, jsonify
+import streamlit as st
 from PIL import Image
 import numpy as np
 from keras.models import load_model
 from keras.applications.inception_v3 import preprocess_input
 import gdown
 import os
-from io import BytesIO
 
-app = Flask(__name__)
+# Caminho do modelo
+MODEL_PATH = "best_model.keras"
+MODEL_URL = "https://drive.google.com/uc?id=1vSIfD3viT5JSxpG4asA8APCwK0JK9Dvu"  # substitua pelo seu ID
 
-MODEL_PATH = "model/best_model.keras"
-MODEL_URL = "https://drive.google.com/uc?id=1vSIfD3viT5JSxpG4asA8APCwK0JK9Dvu"
-CLASS_NAMES = ['cataract', 'diabetic_retinopathy', 'glaucoma', 'normal']
+# Baixar modelo se necessário
+#if not os.path.exists(MODEL_PATH):
+st.write("🔽 Baixando modelo...")
+gdown.download(MODEL_URL, MODEL_PATH, quiet=False)
 
-# Baixar modelo, se necessário
-if not os.path.exists(MODEL_PATH):
-    os.makedirs("model", exist_ok=True)
-    print("🔽 Baixando modelo...")
-    gdown.download(MODEL_URL, MODEL_PATH, quiet=False)
-
-# Carregar o modelo
-print("✅ Carregando modelo...")
+# Carregar modelo
+st.write("✅ Carregando modelo...")
 model = load_model(MODEL_PATH)
+class_names = ['cataract', 'diabetic_retinopathy', 'glaucoma', 'normal']
 
-@app.route("/predict", methods=["POST"])
-def predict():
-    if "file" not in request.files:
-        return jsonify({"error": "Nenhuma imagem enviada."}), 400
+# Interface
+st.title("Eye Disease Classifier")
+st.write("Faça upload de uma imagem do olho para detectar doenças.")
 
-    file = request.files["file"]
-    try:
-        image = Image.open(BytesIO(file.read())).convert("RGB")
-        image = image.resize((256, 256))
-        img_array = np.array(image)
-        img_array = preprocess_input(img_array)
-        img_array = np.expand_dims(img_array, axis=0)
+uploaded_file = st.file_uploader("Escolha uma imagem...", type=["jpg", "jpeg", "png"])
 
-        prediction = model.predict(img_array)[0]
-        predicted_class = CLASS_NAMES[np.argmax(prediction)]
-        confidence = float(np.max(prediction))
+if uploaded_file is not None:
+    image = Image.open(uploaded_file).convert("RGB")
+    st.image(image, caption="Imagem carregada", use_container_width=True)
 
-        return jsonify({
-            "predicted_class": predicted_class,
-            "confidence": round(confidence, 4)
-        })
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    image = image.resize((256, 256))
+    img_array = np.array(image)
+    img_array = preprocess_input(img_array)
+    img_array = np.expand_dims(img_array, axis=0)
 
-@app.route("/", methods=["GET"])
-def home():
-    return "🧠 Eye Disease Classifier API"
+    prediction = model.predict(img_array)[0]
+    predicted_class = class_names[np.argmax(prediction)]
+    confidence = float(np.max(prediction))
 
-if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    st.subheader("Resultado:")
+    st.write(f"**Doença detectada:** {predicted_class}")
+    st.write(f"**Confiança:** {confidence:.2%}")
