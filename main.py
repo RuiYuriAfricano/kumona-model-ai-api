@@ -36,12 +36,9 @@ st.write("Faça upload de uma imagem do olho para detectar doenças.")
 uploaded_file = st.file_uploader("Escolha uma imagem...", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
-    image = Image.open(uploaded_file).convert("RGB")
+    image = Image.open(uploaded_file)
     st.image(image, caption="Imagem carregada", use_column_width=True)
-    
-    # Redimensionar a imagem para o tamanho esperado pelo modelo
-    image = image.resize((256, 256))
-    
+
     # Fazer a predição
     predicted_class, confidence = predict(model, image)
     
