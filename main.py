@@ -22,8 +22,8 @@ class_names = ['cataract', 'diabetic_retinopathy', 'glaucoma', 'normal']
 
 # Função de predição
 def predict(model, img):
-    img2 = tf.keras.utils.load_img(img, target_size=(256, 256))
-    img_array = tf.keras.utils.img_to_array(img2)
+    img = img.resize((256, 256))  # Redimensionar a imagem PIL
+    img_array = tf.keras.utils.img_to_array(img)
     img_array = np.expand_dims(img_array, axis=0).astype(np.float32)
     predictions = model.predict(img_array)
     predicted_class = class_names[np.argmax(predictions[0])]
