@@ -1,8 +1,8 @@
 import streamlit as st
 from PIL import Image
 import numpy as np
+import tensorflow as tf
 from keras.models import load_model
-from keras.applications.inception_v3 import preprocess_input
 import gdown
 import os
 
@@ -11,14 +11,23 @@ MODEL_PATH = "best_model.keras"
 MODEL_URL = "https://drive.google.com/uc?id=1vSIfD3viT5JSxpG4asA8APCwK0JK9Dvu"  # substitua pelo seu ID
 
 # Baixar modelo se necessário
-#if not os.path.exists(MODEL_PATH):
-st.write("🔽 Baixando modelo...")
-gdown.download(MODEL_URL, MODEL_PATH, quiet=False)
+if not os.path.exists(MODEL_PATH):
+    st.write("🔽 Baixando modelo...")
+    gdown.download(MODEL_URL, MODEL_PATH, quiet=False)
 
 # Carregar modelo
 st.write("✅ Carregando modelo...")
 model = load_model(MODEL_PATH)
 class_names = ['cataract', 'diabetic_retinopathy', 'glaucoma', 'normal']
+
+# Função de predição
+def predict(model, img):
+    img_array = tf.keras.utils.img_to_array(img)
+    img_array = tf.expand_dims(img_array, 0)  # Batch boyutu ekle
+    predictions = model.predict(img_array)
+    predicted_class = class_names[np.argmax(predictions[0])]
+    confidence = round(100 * np.max(predictions[0]), 2)  # Yüzde olarak, 2 ondalık
+    return predicted_class, confidence
 
 # Interface
 st.title("Eye Disease Classifier")
@@ -28,17 +37,14 @@ uploaded_file = st.file_uploader("Escolha uma imagem...", type=["jpg", "jpeg", "
 
 if uploaded_file is not None:
     image = Image.open(uploaded_file).convert("RGB")
-    st.image(image, caption="Imagem carregada", use_container_width=True)
-
+    st.image(image, caption="Imagem carregada", use_column_width=True)
+    
+    # Redimensionar a imagem para o tamanho esperado pelo modelo
     image = image.resize((256, 256))
-    img_array = np.array(image)
-    img_array = preprocess_input(img_array)
-    img_array = np.expand_dims(img_array, axis=0)
-
-    prediction = model.predict(img_array)[0]
-    predicted_class = class_names[np.argmax(prediction)]
-    confidence = float(np.max(prediction))
-
+    
+    # Fazer a predição
+    predicted_class, confidence = predict(model, image)
+    
     st.subheader("Resultado:")
     st.write(f"**Doença detectada:** {predicted_class}")
-    st.write(f"**Confiança:** {confidence:.2%}")
+    st.write(f"**Confiança:** {confidence:.2f}%")
