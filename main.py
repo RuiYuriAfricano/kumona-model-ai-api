@@ -12,11 +12,11 @@ MODEL_URL = "https://drive.google.com/uc?id=1vSIfD3viT5JSxpG4asA8APCwK0JK9Dvu"  
 
 # Baixar modelo se necessário
 if not os.path.exists(MODEL_PATH):
-    st.write("🔽 Baixando modelo...")
+    st.write("🔽 Downloading model...")
     gdown.download(MODEL_URL, MODEL_PATH, quiet=False)
 
 # Carregar modelo
-st.write("✅ Carregando modelo...")
+st.write("✅ Loading model...")
 model = load_model(MODEL_PATH)
 class_names = ['cataract', 'diabetic_retinopathy', 'glaucoma', 'normal']
 
@@ -32,17 +32,17 @@ def predict(model, img):
 
 # Interface
 st.title("Eye Disease Classifier")
-st.write("Faça upload de uma imagem do olho para detectar doenças.")
+st.write("Upload an image of your eye to detect diseases.")
 
-uploaded_file = st.file_uploader("Escolha uma imagem...", type=["jpg", "jpeg", "png"])
+uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
     image = Image.open(uploaded_file)
-    st.image(image, caption="Imagem carregada", use_container_width=True)
+    st.image(image, caption="Uploaded image", use_container_width=True)
 
     # Fazer a predição
     predicted_class, confidence = predict(model, image)
     
-    st.subheader("Resultado:")
-    st.write(f"**Doença detectada:** {predicted_class}")
-    st.write(f"**Confiança:** {confidence:.2f}%")
+    st.subheader("Result:")
+    st.write(f"**Disease detected:** {predicted_class}")
+    st.write(f"**Confidence:** {confidence:.2f}%")
