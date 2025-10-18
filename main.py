@@ -13,7 +13,7 @@ MODEL_URL = "https://drive.google.com/uc?id=1vSIfD3viT5JSxpG4asA8APCwK0JK9Dvu"  
 # Baixar modelo se necessário
 if not os.path.exists(MODEL_PATH):
     st.write("🔽 Downloading model...")
-    gdown.download(MODEL_URL, MODEL_PATH, quiet=False)
+    gdown.download(MODEL_URL, MODEL_PATH, quiet=False, fuzzy=True)
 
 # Carregar modelo
 st.write("✅ Loading model...")
