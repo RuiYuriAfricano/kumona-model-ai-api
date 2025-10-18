@@ -8,7 +8,8 @@ import os
 
 # Caminho do modelo
 MODEL_PATH = "best_model.keras"
-MODEL_URL = "https://drive.google.com/uc?id=1vSIfD3viT5JSxpG4asA8APCwK0JK9Dvu"  # substitua pelo seu ID
+MODEL_URL = "https://drive.google.com/uc?id=1U4W3_8A8RAqP520s98AYwK06DT55iEMX" 
+             # substitua pelo seu ID
 
 # Baixar modelo se necessário
 if not os.path.exists(MODEL_PATH):
